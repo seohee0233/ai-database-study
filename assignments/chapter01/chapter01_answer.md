@@ -4,3 +4,5 @@
 #### 현재 접속한 데이터베이스: postgres
 #### 현재 사용자: postgres
 #### 현재 시각: 2026-09-07 19:31:54.390 +0900
+
+![PostgreSQL 실행 환경 확인](./images/step01_environment.png)
