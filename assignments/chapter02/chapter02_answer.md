@@ -77,7 +77,6 @@ assignments/chapter02/images/step01_environment.png
 ```markdown
 ![PostgreSQL 현재 위치 확인](./images/step01_environment.png)
 ```
-
 ![PostgreSQL 실행 환경 확인](./images/step01_environment.png)
 
 ---
