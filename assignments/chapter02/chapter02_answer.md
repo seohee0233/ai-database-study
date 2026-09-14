@@ -11,9 +11,9 @@
 LMS에서 제출자를 확인할 수 있으므로 이 공개 Markdown 파일에 학번이나 실명을 반드시 적을 필요는 없습니다.
 
 ```text
-GitHub 계정 또는 별칭:
-과제 작성일:
-사용한 AI 도구:
+GitHub 계정 또는 별칭: seohee0233
+과제 작성일: 2026-09-14
+사용한 AI 도구: chatgpt
 ```
 
 > 실제 비밀번호, API Key, 전체 DB 접속 URL, 개인정보가 포함된 화면은 올리지 않습니다.
@@ -35,34 +35,34 @@ SHOW search_path;
 ## 1-2. 실행 결과 기록
 
 ```text
-PostgreSQL 버전:
-현재 데이터베이스:
-현재 사용자:
-현재 스키마:
-search_path:
+PostgreSQL 버전: 18.6(apple)
+현재 데이터베이스: postgres
+현재 사용자: postgres
+현재 스키마: practice
+search_path: practice, "$user", public
 ```
 
 ## 1-3. 구조를 내 말로 설명
 
 ```text
-PostgreSQL은:
+PostgreSQL은: 데이터를 저장하고 분석하는 프로그램
 
-현재 접속한 데이터베이스는:
+현재 접속한 데이터베이스는: postgres이며, 데이터 베이스란 가장 큰 저장 공간의 이름이다.
 
-스키마는:
+스키마는: practice로 데이터베이스 안의 폴더 같은 공간이다.
 
-DBeaver 또는 psql 같은 도구는:
+DBeaver 또는 psql 같은 도구는: PostgreSQL에 접속해서 SQL 문장을 입력하고 실행할 수 있게 해 주는 프로그램이다.
 ```
 
 ## 1-4. 계층 구조 완성
 
 ```text
 사용자
-→ ____________________
+→ DBeaver
 → PostgreSQL DBMS
-→ ____________________
-→ ____________________
-→ ____________________
+→ 데이터베이스
+→ 스키마
+→ 테이블
 → 행 / 열
 ```
 
@@ -78,7 +78,7 @@ assignments/chapter02/images/step01_environment.png
 ![PostgreSQL 현재 위치 확인](./images/step01_environment.png)
 ```
 
-`여기에 STEP 1 핵심 증거 화면을 삽입하세요.`
+![PostgreSQL 실행 환경 확인](./images/step01_environment.png)
 
 ---
 
