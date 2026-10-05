@@ -104,7 +104,8 @@ DBeaver에서 확인한 위치: Public
 assignments/chapter04/images/step02_table.png
 ```
 
-![DBeaver PostgreSQL 연결 성공](./step02_table.png)
+![DBeaver PostgreSQL 연결 성공](images/step02_table.png)
+
 
 ---
 
@@ -217,7 +218,7 @@ grade=NULL을 사용하면 grade에 NULL이라고 되어 있는 칸을 찾기 �
 assignments/chapter04/images/step04_select.png
 ```
 
-![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step04_select.png)
+![DBeaver PostgreSQL 연결 성공](images/step04_select.png)
 
 ---
 
