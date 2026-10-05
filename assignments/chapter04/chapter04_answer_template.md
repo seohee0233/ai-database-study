@@ -104,7 +104,7 @@ DBeaver에서 확인한 위치: Public
 assignments/chapter04/images/step02_table.png
 ```
 
-`![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step02_table.png)`
+![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step02_table.png)
 
 ---
 
@@ -113,9 +113,9 @@ assignments/chapter04/images/step02_table.png
 ## 3-1. 실행 전 예상
 
 ```text
-현재 행 수:
-실행 후 예상 행 수:
-예상되는 NULL 포함 학생:
+현재 행 수: 0
+실행 후 예상 행 수: 6
+예상되는 NULL 포함 학생: 1
 ```
 
 ## 3-2. 실행 파일
@@ -127,24 +127,24 @@ code/chapter04/02_insert_students.sql
 ## 3-3. 실제 결과
 
 ```text
-실제 행 수:
-이준호 grade:
-박서연 존재 여부:
-윤서진 major:
-윤서진 grade:
+실제 행 수: 6
+이준호 grade: 3
+박서연 존재 여부: Y
+윤서진 major: Null
+윤서진 grade: Null
 ```
 
 ### 예상과 실제 비교
 
 ```text
-예상과 실제가 일치했는가:
-다르다면 이유:
+예상과 실제가 일치했는가: Y
+다르다면 이유:같음
 ```
 
 ### `created_at` 값이 여러 행에서 같을 수 있는 이유
 
 ```text
-
+자동으로 입력된 시간을 넣기 때문에 동시에 넣으면 같은 시간에 생성되기 때문에 동일한 created at이 생성됨
 ```
 
 ---
@@ -155,55 +155,58 @@ code/chapter04/02_insert_students.sql
 
 | 번호 | 조회 문제 | 예상 행 수 | 실제 행 수 | 일치? | 다르면 이유 |
 | ---: | --- | ---: | ---: | --- | --- |
-| 1 | 전체 학생 |  |  |  |  |
-| 2 | 이름·이메일만 조회 |  |  |  |  |
-| 3 | 특정 전공 |  |  |  |  |
-| 4 | 특정 학년 이상 |  |  |  |  |
-| 5 | 두 전공 중 하나 |  |  |  |  |
-| 6 | `grade IS NULL` |  |  |  |  |
-| 7 | 전공 `DISTINCT` |  |  |  |  |
-| 8 | 정렬 후 상위 3명 |  |  |  |  |
+| 1 | 전체 학생 | 6 | 6 | 일치 | 일치 |
+| 2 | 이름·이메일만 조회 | 1 | 6 | 6 | 특정 이름, 이메일만 검색한 것이 아니니까 |
+| 3 | 특정 전공 | 1~2 | 2 | 부분 일치 | 전공에 따라서 속한 행 달라짐 |
+| 4 | 특정 학년 이상 | 2 | 2 | 일치 | 일치 |
+| 5 | 두 전공 중 하나 | 3 | 3 | 일치 | 일치 |
+| 6 | `grade IS NULL` | 1 | 1 | 일치 | 일치 |
+| 7 | 전공 `DISTINCT` | 4 | 5 | 일치 | Null도 전공으로 분류됨 |
+| 8 | 정렬 후 상위 3명 | 3 | 3 | 일치 | 일치 |
 
 ## 4-1. 내가 직접 작성한 SQL 2개
 
 ```sql
 -- SQL 1
-
+select name, email
+from public.students;
 ```
 
 ```text
-이 SQL의 한 행 의미:
-예상 행 수:
-실제 행 수:
+이 SQL의 한 행 의미: 한 학생의 이름과 이메일
+예상 행 수: 1
+실제 행 수: 6
 ```
 
 ```sql
 -- SQL 2
-
+select *
+from public.students
+where major = '컴퓨터공학';
 ```
 
 ```text
-이 SQL의 한 행 의미:
-예상 행 수:
-실제 행 수:
+이 SQL의 한 행 의미: 한 학생의 정보
+예상 행 수: 2
+실제 행 수: 2
 ```
 
 ## 4-2. `= NULL` 대신 `IS NULL`을 사용하는 이유
 
 ```text
-
+grade=NULL을 사용하면 grade에 NULL이라고 되어 있는 칸을 찾기 때문에 나오지 않음. is NULL이라고 해야 빈칸인 애를 찾음
 ```
 
 ## 4-3. `ORDER BY` 없이 결과 순서를 믿으면 안 되는 이유
 
 ```text
-
+순서가 임의로 정렬되어 있을 수 있기 때문에
 ```
 
 ## 4-4. `DISTINCT`가 원본 데이터를 삭제하는 기능인가요?
 
 ```text
-
+아니다, 해당 부분만 따로 검색하는 것이지 수정하거나 삭제하는 기능이 아니다. 
 ```
 
 ### 증거 화면
@@ -214,7 +217,7 @@ code/chapter04/02_insert_students.sql
 assignments/chapter04/images/step04_select.png
 ```
 
-`여기에 SELECT 핵심 결과 화면을 삽입하세요.`
+![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step04_select.png)
 
 ---
 
@@ -226,39 +229,43 @@ assignments/chapter04/images/step04_select.png
 
 ```text
 학생 A
-이름:
-이메일:
-전공:
-학년:
+이름: 정우영
+이메일: woo22@gmail.com
+전공: 경영학
+학년: 4
 
 학생 B
-이름:
-이메일:
-전공:
-학년 또는 NULL:
+이름: 최산
+이메일: mountain@gmail.com
+전공: 컴퓨터공학
+학년 또는 NULL: NULL
 
-현재 행 수:
-추가 후 예상 행 수:
+현재 행 수: 6
+추가 후 예상 행 수:8
 ```
 
 ## 5-2. 내가 실행한 INSERT
 
 ```sql
-
+INSERT INTO public.students (name, email, major, grade)
+values
+	('정우영', 'woo22@gmail.com', '경영학', 4),
+	('최산', 'mountain@gmail.com', '컴퓨터공학',NULL)
+RETURNING id, name, email, major, grade;
 ```
 
 ## 5-3. 실제 결과
 
 ```text
-RETURNING 또는 확인 SELECT 결과:
-실제 전체 행 수:
-예상과 일치 여부:
+RETURNING 또는 확인 SELECT 결과: 입력한 값이 모두 잘 들어감
+실제 전체 행 수: 8
+예상과 일치 여부: Y
 ```
 
 ### 내가 일부 값을 NULL로 둔 이유 또는 NULL을 사용하지 않은 이유
 
 ```text
-
+grade는 빈칸으로 둬도 되기 때문에
 ```
 
 ---
@@ -270,12 +277,14 @@ RETURNING 또는 확인 SELECT 결과:
 ## 6-1. 먼저 대상 확인 SELECT
 
 ```sql
-
+SELECT *
+FROM public.students
+WHERE email = 'woo22@gmail.com';
 ```
 
 ```text
-예상 대상 행 수:
-실제 대상 행 수:
+예상 대상 행 수: 1
+실제 대상 행 수: 1
 ```
 
 ## 6-2. UPDATE
@@ -293,13 +302,16 @@ RETURNING 결과:
 ## 6-3. UPDATE 후 재조회
 
 ```sql
-
+UPDATE public.students
+SET grade = 3
+WHERE email = 'woo22@gmail.com'
+RETURNING id, name, email, grade;
 ```
 
 ### `WHERE` 없는 UPDATE를 실행하면 위험한 이유
 
 ```text
-
+전체 데이터를 변경할 가능성이 있으므로
 ```
 
 ### 증거 화면
@@ -310,7 +322,8 @@ RETURNING 결과:
 assignments/chapter04/images/step06_update.png
 ```
 
-`여기에 UPDATE 전/후 결과 화면을 삽입하세요.`
+![Dbeaver PostgreSQL 연결 성공](assignments/chapter04/images/step06_update1.png)
+![Dbeaver PostgreSQL 연결 성공](assignments/chapter04/images/step06_update2.png)
 
 ---
 
@@ -321,40 +334,46 @@ assignments/chapter04/images/step06_update.png
 ## 7-1. 삭제 전 확인
 
 ```sql
-
+select *
+from public.students
+where email = 'woo22@gmail.com';
 ```
 
 ```text
-예상 대상 행 수:
-실제 대상 행 수:
+예상 대상 행 수: 1
+실제 대상 행 수: 1
 ```
 
 ## 7-2. DELETE
 
 ```sql
-
+DELETE FROM public.students
+WHERE email = 'woo22@gmail.com'
+RETURNING id, name, email; 
 ```
 
 ```text
-예상 영향 행 수:
-실제 영향 행 수:
-RETURNING 결과:
+예상 영향 행 수: 1
+실제 영향 행 수: 1
+RETURNING 결과: 해당 학생 정보 나옴
 ```
 
 ## 7-3. 삭제 후 재조회
 
 ```sql
-
+select *
+from public.students
+where email = 'woo22@gmail.com';
 ```
 
 ```text
-삭제 후 같은 조건의 SELECT 결과 행 수:
+삭제 후 같은 조건의 SELECT 결과 행 수: 0 
 ```
 
 ### `DELETE` 성공 메시지만 보고 끝내지 않고 다시 SELECT해야 하는 이유
 
 ```text
-
+실제로는 삭제가 안되었을 수도 있기 때문에.
 ```
 
 ---
@@ -364,9 +383,9 @@ RETURNING 결과:
 `04_update_delete_students.sql`을 본문 시작 상태에서 실행했다면 다음을 확인합니다.
 
 ```text
-최종 학생 수:
-이준호 grade:
-박서연 존재 여부:
+최종 학생 수: 5
+이준호 grade: 4
+박서연 존재 여부: N
 ```
 
 본문 기준 기대 상태와 비교합니다.
@@ -380,7 +399,7 @@ RETURNING 결과:
 ### 내 실제 결과가 기준과 다르다면 원인
 
 ```text
-
+같음
 ```
 
 ---
@@ -394,14 +413,15 @@ RETURNING 결과:
 내가 사용한 SQL:
 
 ```sql
-
+INSERT INTO public.students (name, email, major, grade)
+VALUES ('중복테스트', 'minji@example.com', '테스트전공', 1);
 ```
 
 ```text
-오류 메시지 핵심 단서:
-왜 실패해야 맞는가:
-어떤 규칙이 작동했는가:
-실패 후 기존 데이터가 어떻게 유지되었는가:
+오류 메시지 핵심 단서: already exists
+왜 실패해야 맞는가: 이메일은 unique라고 했는데 이미 있는 이메일이라서
+어떤 규칙이 작동했는가: unique
+실패 후 기존 데이터가 어떻게 유지되었는가: 기존 데이터는 유지됨
 ```
 
 ## 9-2. 이름 `NULL` 입력 `NOT NULL` 오류
@@ -409,19 +429,20 @@ RETURNING 결과:
 내가 사용한 SQL:
 
 ```sql
-
+INSERT INTO public.students (name, email, major, grade)
+VALUES (NULL, 'null_name_test@example.com', '테스트전공', 1);
 ```
 
 ```text
-오류 메시지 핵심 단서:
-왜 실패해야 맞는가:
-어떤 규칙이 작동했는가:
+오류 메시지 핵심 단서: null value
+왜 실패해야 맞는가: name은 not null이라고 정했기 때문에
+어떤 규칙이 작동했는가: not null
 ```
 
 ### 실패한 INSERT 뒤 자동 생성 `id` 번호에 빈 구간이 생길 수 있어도 문제라고 단정할 수 없는 이유
 
 ```text
-
+id는 자동으로 생성된 것이기 때문에 삭제, 추가 하는 과정에서 빈 구간이 생길 수 있음
 ```
 
 ### 증거 화면
@@ -432,7 +453,7 @@ RETURNING 결과:
 assignments/chapter04/images/step09_constraint_error.png
 ```
 
-`여기에 제약조건 오류 화면을 삽입하세요.`
+![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step09_constraint_error.png)
 
 ---
 
@@ -445,17 +466,17 @@ code/chapter04/verify_students.sql
 ```
 
 ```text
-현재 전체 학생 수:
-NULL 개수:
-이준호 grade:
-박서연 존재 여부:
-현재 데이터 상태에서 예상과 다른 부분:
+현재 전체 학생 수: 5
+NULL 개수: 1
+이준호 grade: 4
+박서연 존재 여부: N
+현재 데이터 상태에서 예상과 다른 부분: N
 ```
 
 ### 검증 SQL을 따로 두면 좋은 이유
 
 ```text
-
+단순히 오류 없이 실행했다는 사실과 최종 구조와 데이터가 기대 상태와 맞다는 것은 다르기 때문에
 ```
 
 ---
@@ -467,33 +488,42 @@ NULL 개수:
 ## 11-1. 내가 작성한 SQL
 
 ```sql
-
+Delete from public.students
+where name = '최산'
 ```
 
 ## 11-2. AI에게 전달한 핵심 요청
 
 ```text
-
+나는 PostgreSQL 초보자입니다.
+아래 SQL을 바로 다시 작성하지 말고 먼저 안전성을 검토해 주세요.
+다음 순서로 답해 주세요.
+1. 이 SQL이 영향을 줄 것으로 예상되는 행
+2. WHERE 조건이 너무 넓거나 모호하지 않은지
+3. NULL 처리에서 주의할 점
+4. 실행 전에 같은 조건으로 확인할 SELECT
+5. 실행 후 결과를 확인할 SELECT
+6. 내가 놓친 위험이 있다면 질문 형태로 제시
 ```
 
 ## 11-3. AI 검토 결과
 
 | AI 제안 | 수용 / 수정 / 거절 | 실제 검증 결과 | 나의 이유 |
 | --- | --- | --- | --- |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id처럼 각 학생을 고유하게 구별하는 값으로 삭제 대상을 먼저 확인할 수 있나요? | 수용 | 고유 값을 확인 가능 | 고유값으로 삭제하는 것이 더 안전 |
+| '최산'이라는 이름을 가진 모든 행을 삭제하려는 것이 맞나요? | 수용 | 실제 최산의 행이 삭제 | 원하는 시행 결과 |
+| 이 학생을 참조하는 다른 테이블의 외래 키가 있다면, 삭제가 거부되거나 관련 데이터에 영향을 줄 수 있나요? | 거절 | 삭제됨 |  |
 
 ### AI가 예상한 영향 행 수와 실제 결과가 같았나요?
 
 ```text
-
+Y
 ```
 
 ### AI 답변을 실행 전에 검토해야 하는 이유
 
 ```text
-
+정확히 내가 원하는 방향으로 이루어졌는지 확인하기 위해서 
 ```
 
 ---
@@ -503,18 +533,20 @@ NULL 개수:
 Chapter 01~03에서 정한 개인 서비스에서 **테이블 하나**를 선택합니다.
 
 ```text
-서비스 이름:
-테이블 이름:
-한 행의 의미:
+서비스 이름: 경영대 우산 대여 서비스
+테이블 이름: stdents_rental
+한 행의 의미: 우산을 대여한 학생의 
 ```
 
 | 열 이름 | 저장할 값 | 타입 후보 | NULL 가능? | UNIQUE 후보? | 이유 |
 | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
-|  |  |  |  |  |  |
+| id | 자동 생성 | integer | N | N | 자동 생성(중복 불가) |
+| 이름 | 이름 |  | N | Y | 동명이인 가능 |
+| 학번 | 서울대 학번 |  | N | N | 고유 번호로 판별 |
+| 학과 | 소속 주전공 |  | N | Y | 동일 학과 가능 |
+| 대여 날짜 |  | created time | N | N | 같은 날짜에 대여 가능 |
+| 반납 날짜 | 반납 필수 날짜 | time |  |  | 같은 날짜에 반납 예정 가능 |
+| 반납 여부 |  |  | N |  |  |
 
 ```text
 PK 후보:
@@ -544,42 +576,42 @@ PK 후보:
 
 ```text
 1. SQL 실행 성공과 올바른 대상 선택이 다른 이유는
-   ____________________________________________________________ 이다.
+   실행은 문장이 잘 실행되었다는 뜻이고 대상 선택은 원하는 대로 실행이 되었다는 뜻이다.
 
 2. UPDATE와 DELETE 전에 SELECT를 먼저 해야 하는 이유는
-   ____________________________________________________________ 이다.
+   그래야 정확하게 실행 여부, 혹은 오류가 난다면 그 이유를 설명할 수 있기 때문이다.
 
 3. 영향받은 행 수를 확인해야 하는 이유는
-   ____________________________________________________________ 이다.
+   다른 행이 영향 받는 다면 원하는 구조가 안나올 수 도 있기 때문이다.
 
 4. UNIQUE 또는 NOT NULL 오류를 '보호 장치가 정상 동작한 결과'라고 볼 수 있는 이유는
-   ____________________________________________________________ 이다.
+   이미 설정해둔 초기값에 부합하는 지 여부를 보는 것이기 때문이다.
 
 5. AI가 SQL을 만들어 주더라도 내가 반드시 확인해야 하는 것은
-   ____________________________________________________________ 이다.
+   전과 후를 직접 실행해보는 것 이다.
 ```
 
 ---
 
 # 14. 제출 체크리스트
 
-- [ ] `chapter04_answer.md`를 본인 저장소에 만들었다.
-- [ ] 현재 DB와 실행 환경을 확인했다.
-- [ ] `public.students`를 생성했다.
-- [ ] 샘플 6명 입력 결과를 검증했다.
-- [ ] SELECT 문제에서 실행 전 예상 행 수를 작성했다.
-- [ ] 가상 학생 2명을 추가했다.
-- [ ] UPDATE 전후를 SELECT로 확인했다.
-- [ ] DELETE 전후를 SELECT로 확인했다.
-- [ ] UNIQUE 오류를 관찰했다.
-- [ ] NOT NULL 오류를 관찰했다.
-- [ ] `verify_students.sql`로 상태를 확인했다.
-- [ ] AI 제안을 실제 SQL 결과와 비교했다.
-- [ ] 개인 서비스 테이블 하나를 확장 설계했다.
-- [ ] 핵심 캡처는 3~4장 정도로 제한했다.
-- [ ] 비밀번호·개인정보가 캡처에 없다.
-- [ ] Markdown 이미지가 GitHub 웹 화면에서 정상 표시된다.
-- [ ] commit/push를 완료했다.
+- [V] `chapter04_answer.md`를 본인 저장소에 만들었다.
+- [V] 현재 DB와 실행 환경을 확인했다.
+- [V] `public.students`를 생성했다.
+- [V] 샘플 6명 입력 결과를 검증했다.
+- [V] SELECT 문제에서 실행 전 예상 행 수를 작성했다.
+- [V] 가상 학생 2명을 추가했다.
+- [V] UPDATE 전후를 SELECT로 확인했다.
+- [V] DELETE 전후를 SELECT로 확인했다.
+- [V] UNIQUE 오류를 관찰했다.
+- [V] NOT NULL 오류를 관찰했다.
+- [V] `verify_students.sql`로 상태를 확인했다.
+- [V] AI 제안을 실제 SQL 결과와 비교했다.
+- [V] 개인 서비스 테이블 하나를 확장 설계했다.
+- [V] 핵심 캡처는 3~4장 정도로 제한했다.
+- [V] 비밀번호·개인정보가 캡처에 없다.
+- [V] Markdown 이미지가 GitHub 웹 화면에서 정상 표시된다.
+- [V] commit/push를 완료했다.
 
 ---
 
