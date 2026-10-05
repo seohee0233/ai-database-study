@@ -11,9 +11,9 @@
 이 파일과 캡처 화면에는 실제 비밀번호, 전체 DB 접속 URL, API Key, 개인정보를 기록하지 않습니다.
 
 ```text
-GitHub 계정 또는 별칭:
-과제 작성일:
-사용한 AI 도구:
+GitHub 계정 또는 별칭: postgres
+과제 작성일: 2026-10-05
+사용한 AI 도구: ChatGPT
 ```
 
 ---
@@ -32,21 +32,21 @@ SHOW transaction_read_only;
 
 | 확인 항목 | 실제 결과 | 의미 |
 | --- | --- | --- |
-| current_database() |  |  |
-| current_user |  |  |
-| current_schema() |  |  |
-| search_path |  |  |
-| transaction_read_only |  |  |
+| current_database() | ai_database_book | sql의 데이터베이스 중 ai_database_book 사용 |
+| current_user | postgres | 현재 사용자 이름 |
+| current_schema() | public | 테이블만 입력하면 기본으로 뜨는 것 |
+| search_path | public, "$user" | 테이블을 찾는 순서가 public 다음 user이다  |
+| transaction_read_only | off | 변경 및 수정 가능하다 |
 
-- [ ] 현재 DB가 `ai_database_book`이다.
-- [ ] 변경 가능한 연결인지 확인했다.
-- [ ] 실행할 SQL 범위를 확인했다.
-- [ ] Auto-commit 상태를 확인했다.
+- [V] 현재 DB가 `ai_database_book`이다.
+- [V] 변경 가능한 연결인지 확인했다.
+- [V] 실행할 SQL 범위를 확인했다.
+- [V] Auto-commit 상태를 확인했다.
 
 ### 변경 SQL을 실행하기 전에 현재 DB와 실행 범위를 확인해야 하는 이유
 
 ```text
-
+변경 SQL의 경우 데이터를 수정이나 삭제할 수 있기 때문에 현재 DB를 먼저 확인하여 얼마나 영향을 받는지 실행 범위를 확인해야 한다. 
 ```
 
 ---
@@ -56,13 +56,13 @@ SHOW transaction_read_only;
 ## 2-1. 실행 전 예상
 
 ```text
-테이블 이름:
-한 행의 의미:
-예상 행 수:
-기본키:
-필수 열:
-중복을 막는 열:
-자동 생성 열:
+테이블 이름: students
+한 행의 의미: 학생 한 명
+예상 행 수: 6개
+기본키: id
+필수 열: name, email, time
+중복을 막는 열: email
+자동 생성 열: id
 ```
 
 ## 2-2. 실행 파일
@@ -74,26 +74,26 @@ code/chapter04/01_create_students.sql
 ## 2-3. 실행 후 확인
 
 ```text
-테이블 생성 성공 여부:
-실제 행 수:
-DBeaver에서 확인한 위치:
+테이블 생성 성공 여부: Y
+실제 행 수: 6
+DBeaver에서 확인한 위치: Public
 ```
 
 ### 각 열의 역할
 
 | 열 | 타입 | NULL 가능? | 역할 |
 | --- | --- | --- | --- |
-| id |  |  |  |
-| name |  |  |  |
-| email |  |  |  |
-| major |  |  |  |
-| grade |  |  |  |
-| created_at |  |  |  |
+| id | integer | N | 구분 |
+| name | character varying | N | 이름 알려줌 |
+| email | character varying | N | 중복 방지 |
+| major | character varying | Y | 전공 알려줌 |
+| grade | integer | Y | 성적 표시 |
+| created_at | timestamp with time zone | N | 생성 시간 표시 |
 
 ### `id`를 학번이나 학생 수로 해석하면 안 되는 이유
 
 ```text
-
+구별하기 위해서 붙이는 번호이기 때문에 중간에 학생을 삭제하거나 추가하면 번호가 건너 뛸 수 있기 때문에 학생 수로 파악하면 안되며, 학번이라는 고유의 번호가 아니라 임의로 지정한 것이다.
 ```
 
 ### 증거 화면
@@ -104,7 +104,7 @@ DBeaver에서 확인한 위치:
 assignments/chapter04/images/step02_table.png
 ```
 
-`여기에 테이블 구조 확인 화면을 삽입하세요.`
+`![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step02_table.png)`
 
 ---
 
