@@ -106,6 +106,7 @@ assignments/chapter04/images/step02_table.png
 
 ![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step02_table.png)
 
+
 ---
 
 # 3. 샘플 데이터 6명 입력
@@ -626,7 +627,7 @@ https://github.com/<본인-GitHub-ID>/<본인-저장소>/blob/main/assignments/c
 내 제출 URL:
 
 ```text
-
+https://github.com/seohee0233/ai-database-study/blob/main/assignments/chapter04/chapter04_answer_template.md
 ```
 
 > 교수자 템플릿 URL이나 저장소 메인 URL이 아니라 **작성 완료된 본인 `chapter04_answer.md` 파일 화면 URL**을 제출합니다.
