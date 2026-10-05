@@ -323,8 +323,8 @@ RETURNING id, name, email, grade;
 assignments/chapter04/images/step06_update.png
 ```
 
-![Dbeaver PostgreSQL 연결 성공](assignments/chapter04/images/step06_update1.png)
-![Dbeaver PostgreSQL 연결 성공](assignments/chapter04/images/step06_update2.png)
+![Dbeaver PostgreSQL 연결 성공](images/step06_update1.png)
+![Dbeaver PostgreSQL 연결 성공](images/step06_update2.png)
 
 ---
 
@@ -454,7 +454,7 @@ id는 자동으로 생성된 것이기 때문에 삭제, 추가 하는 과정에
 assignments/chapter04/images/step09_constraint_error.png
 ```
 
-![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step09_constraint_error.png)
+![DBeaver PostgreSQL 연결 성공](images/step09_constraint_error.png)
 
 ---
 
