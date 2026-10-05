@@ -104,7 +104,7 @@ DBeaver에서 확인한 위치: Public
 assignments/chapter04/images/step02_table.png
 ```
 
-![DBeaver PostgreSQL 연결 성공](assignments/chapter04/images/step02_table.png)
+![DBeaver PostgreSQL 연결 성공](ai-database-study/assignments/chapter04/images/step02_table.png)
 
 
 ---
