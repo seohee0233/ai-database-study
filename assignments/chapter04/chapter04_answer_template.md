@@ -104,8 +104,7 @@ DBeaver에서 확인한 위치: Public
 assignments/chapter04/images/step02_table.png
 ```
 
-![DBeaver PostgreSQL 연결 성공](ai-database-study/assignments/chapter04/images/step02_table.png)
-
+![DBeaver PostgreSQL 연결 성공](./step02_table.png)
 
 ---
 
@@ -535,24 +534,24 @@ Chapter 01~03에서 정한 개인 서비스에서 **테이블 하나**를 선택
 
 ```text
 서비스 이름: 경영대 우산 대여 서비스
-테이블 이름: stdents_rental
+테이블 이름: rental_students
 한 행의 의미: 우산을 대여한 학생의 
 ```
 
 | 열 이름 | 저장할 값 | 타입 후보 | NULL 가능? | UNIQUE 후보? | 이유 |
 | --- | --- | --- | --- | --- | --- |
 | id | 자동 생성 | integer | N | N | 자동 생성(중복 불가) |
-| 이름 | 이름 |  | N | Y | 동명이인 가능 |
-| 학번 | 서울대 학번 |  | N | N | 고유 번호로 판별 |
-| 학과 | 소속 주전공 |  | N | Y | 동일 학과 가능 |
-| 대여 날짜 |  | created time | N | N | 같은 날짜에 대여 가능 |
-| 반납 날짜 | 반납 필수 날짜 | time |  |  | 같은 날짜에 반납 예정 가능 |
-| 반납 여부 |  |  | N |  |  |
+| 이름 | 이름 | character varying | N | Y | 동명이인 가능 |
+| 학번 | 서울대 학번 | integer | N | N | 고유 번호로 판별 |
+| 학과 | 소속 주전공 | character varying | Y | Y | 동일 학과 가능 |
+| 대여 날짜 | 대여한 날짜 | created time | N | N | 같은 날짜에 대여 가능 |
+| 반납 날짜 | 반납 필수 날짜 | time | N | N | 같은 날짜에 반납 예정 가능 |
+| 반납 여부 | 반납, 연체, 보류 | character varying | N | N | 반납 여부를 통해서 연체 table로 연결 |
 
 ```text
-PK 후보:
-업무 식별자 후보:
-아직 미확정인 규칙:
+PK 후보: id
+업무 식별자 후보: 학번
+아직 미확정인 규칙: 연체 중인 경우 얼마나 대여를 불가하게 만들지, 주전공을 제외한 다른 전공도 연체 가능한지
 ```
 
 ## 선택: CREATE TABLE 초안
@@ -560,13 +559,27 @@ PK 후보:
 > 아직 확정되지 않은 업무 규칙은 억지로 제약조건으로 만들지 않습니다.
 
 ```sql
-
+CREATE TABLE rental_students (
+    rental_student_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    student_number VARCHAR(9) NOT NULL UNIQUE,
+    student_name VARCHAR(10) NOT NULL,
+    major VARCHAR(10),
+    registered_on DATE NOT NULL
+);
 ```
 
 ### AI에게 검토받은 뒤 수정한 부분
 
 ```text
+CREATE TABLE rental_students (
+    rental_student_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    student_number VARCHAR(9) NOT NULL UNIQUE,
+    student_name VARCHAR(20) NOT NULL,
+    major VARCHAR(50),
+    registered_on DATE NOT NULL
+);
 
+바이오시스템공학융합대학 등 학과명이 긴 경우가 존재하기 때문에 넉넉하게 전공 글자수를 최대 50자로 변경
 ```
 
 ---
