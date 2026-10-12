@@ -201,7 +201,7 @@ Markdown 예시:
 ![도서 대여 ERD](./images/step07_library_erd.png)
 ```
 
-![도서 대여 ERD] (./images/step07_library_erd.png)
+![도서 대여 ERD](./images/step07_library_erd.png)
 
 ### ERD를 그린 뒤 수정한 부분
 
