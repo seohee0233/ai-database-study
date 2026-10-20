@@ -385,7 +385,7 @@ loans: 3
 assignments/chapter06/images/step08_integrity_error.png
 ```
 
-![실패](.images/step08_integrity_error.png)
+![실패](./images/step08_integrity_error.png)
 
 ---
 
