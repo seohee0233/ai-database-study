@@ -1,4 +1,4 @@
-# Chapter 10 확장 실습 답안 템플릿
+# Chapter 10 확장 실습 답안
 
 > **과제:** 실행 계획으로 인덱스 효과 검증하기  
 > **사용 방법:** 이 파일을 내려받아 본인의 GitHub 저장소에 `chapter10_answer.md`라는 이름으로 저장한 뒤 실습하면서 바로 작성합니다.  
@@ -11,9 +11,9 @@
 이 파일과 캡처 화면에는 실제 비밀번호, 전체 DB 접속 URL, API Key, 개인정보를 기록하지 않습니다.
 
 ```text
-GitHub 계정 또는 별칭:
-과제 작성일:
-사용한 AI 도구:
+GitHub 계정 또는 별칭: seohee0233
+과제 작성일: 2026-11-12
+사용한 AI 도구: ChatGPT
 ```
 
 ---
@@ -32,16 +32,17 @@ SHOW search_path;
 
 | 확인 항목 | 실제 결과 | 의미 |
 | --- | --- | --- |
-| PostgreSQL 버전 |  |  |
-| `current_database()` |  |  |
-| `current_user` |  |  |
-| `current_schema()` |  |  |
-| `search_path` |  |  |
+| PostgreSQL 버전 | 17.0 | 현재 사용하는 PostgreSQL의 버전 |
+| `current_database()` | `ai_database_book` | 현재 연결된 데이터베이스가 실습 대상 DB인지 확인한다 |
+| `current_user` | `postgres` | 사용자 계정 |
+| `current_schema()` | `public` | 기본으로 사용하는 스키마 |
+| `search_path` | `public, "$user"` | PostgreSQL이 테이블·객체를 찾을 스키마 순서 |
+
 
 ### PostgreSQL 버전을 기록해야 하는 이유
 
 ```text
-
+버전마다 표시되는 것이나 항목이 다르기 때문에
 ```
 
 > 이 장의 자동 검증 기준은 PostgreSQL 16입니다. PostgreSQL 18 이상에서는 B-tree Skip Scan 등으로 동일 SQL의 실행 계획이 달라질 수 있습니다.
@@ -74,19 +75,19 @@ enrollments = 5
 ### 실제 확인 결과
 
 ```text
-students:
-instructors:
-courses:
-enrollments:
-전체 recorded_amount:
-활성 신청 건수/금액:
-취소 제외 건수/금액:
+students: 3
+instructors: 2
+courses: 3
+enrollments: 5
+전체 recorded_amount: 59000
+활성 신청 건수/금액: 3 / 34000
+취소 제외 건수/금액: 4 / 44000
 ```
 
 ### 성능 실험을 기존 `course_project`에 대량 데이터를 넣지 않고 별도 스키마에서 하는 이유
 
 ```text
-
+기존의 것을 건드리지 않기 위해서
 ```
 
 ---
@@ -104,25 +105,25 @@ code/chapter10/02_performance_lab_seed.sql
 
 | 테이블 | 기대 행 수 | 실제 행 수 | 일치? |
 | --- | ---: | ---: | --- |
-| `performance_lab.students` | 10003 |  |  |
-| `performance_lab.instructors` | 2 |  |  |
-| `performance_lab.courses` | 2003 |  |  |
-| `performance_lab.enrollments` | 100005 |  |  |
+| `performance_lab.students` | 10003 | 10003 | 일치 |
+| `performance_lab.instructors` | 2 | 2 | 일치 |
+| `performance_lab.courses` | 2003 | 2003 | 일치 |
+| `performance_lab.enrollments` | 100005 | 100005 | 일치 |
 
 ## 3-2. 데이터 분포 확인
 
 | 조건 | 기대 행 수 | 실제 행 수 | 대략적 비율 |
 | --- | ---: | ---: | ---: |
-| `performance5000@example.com` | 1 |  |  |
-| `student_id = 5000` | 10 |  | 약 0.010% |
-| `course_id = 1500` | 50 |  | 약 0.050% |
-| `course_id = 1500 AND status='수강중'` | 15 |  | 약 0.015% |
-| 전체 `status='수강중'` | 30001 |  | 약 30.0% |
+| `performance5000@example.com` | 1 | 1 | 약 0.010% |
+| `student_id = 5000` | 10 | 10 | 약 0.010% |
+| `course_id = 1500` | 50 | 50 | 약 0.050% |
+| `course_id = 1500 AND status='수강중'` | 15 | 15 | 약 0.015% |
+| 전체 `status='수강중'` | 30001 | 30001 | 약 30.0% |
 
 ### 선택도가 낮은 조건과 많은 행을 반환하는 조건은 인덱스 판단에서 어떻게 다르게 볼 수 있나요?
 
 ```text
-
+선택도가 낮아 적은 행을 찾는 조건은 인덱스가 효율적일 수 있다. 반대로 많은 행을 반환하는 조건은 인덱스를 따라가며 찾는 것보다 테이블을 한 번에 읽는 게 효율적일 수 있다.
 ```
 
 ### 증거 화면
@@ -133,7 +134,7 @@ code/chapter10/02_performance_lab_seed.sql
 assignments/chapter10/images/step03_data_scale.png
 ```
 
-`여기에 데이터 규모 확인 화면을 삽입하세요.`
+![data](./images/step03_data_scale.png)
 
 ---
 
@@ -152,76 +153,80 @@ code/chapter10/03_baseline_explain.sql
 ## Query A
 
 ```text
-업무 질문:
-WHERE / JOIN / ORDER BY / LIMIT:
-예상 반환 행 수:
-실제 반환 행 수:
+업무 질문: 학생 5000번이 수강 중인 강의 신청 정보를 확인한다.
+WHERE / JOIN / ORDER BY / LIMIT: WHERE student_id = 5000 AND status = '수강중'
+예상 반환 행 수: 3
+실제 반환 행 수: 3
 ```
 
 ```sql
 -- 대상 SQL
-
+SELECT *
+FROM performance_lab.enrollments
+WHERE student_id = 5000
+  AND status = '수강중';
 ```
 
 | 관찰 항목 | 기록 |
 | --- | --- |
-| 주요 Scan/계획 노드 |  |
-| estimated rows |  |
-| actual rows |  |
-| Filter |  |
-| Index Cond |  |
-| Buffers hit/read |  |
-| Planning Time |  |
-| Execution Time |  |
+| 주요 Scan/계획 노드 | `Seq Scan on enrollments` |
+| estimated rows | 3 |
+| actual rows | 3 |
+| Filter | `student_id = 5000 AND status = '수강중'` |
+| Index Cond | 없음 |
+| Buffers hit/read | `shared hit = 736`|
+| Planning Time | 0.254 ms |
+| Execution Time | 16.709 ms |
 
 ## Query B
 
 ```text
-업무 질문:
-WHERE / JOIN / ORDER BY / LIMIT:
-예상 반환 행 수:
-실제 반환 행 수:
+업무 질문: 강의명을 가나다 순으로 해서 20개만 뽑기
+WHERE / JOIN / ORDER BY / LIMIT: Limit
+예상 반환 행 수: 20
+실제 반환 행 수: 20
 ```
 
 | 관찰 항목 | 기록 |
 | --- | --- |
-| 주요 Scan/계획 노드 |  |
-| estimated rows |  |
-| actual rows |  |
-| Filter |  |
-| Index Cond |  |
-| Buffers hit/read |  |
-| Execution Time |  |
+| 주요 Scan/계획 노드 | Seq Scan on courses |
+| estimated rows | 20 |
+| actual rows | 20 |
+| Filter | 없음 |
+| Index Cond | 없음 |
+| Buffers hit/read | `shared hit = 34`, `read = 0` |
+| Planning Time | 4.245 ms |
+| Execution Time | 2.199 ms |
 
 ## Query C
 
 ```text
-업무 질문:
-WHERE / JOIN / ORDER BY / LIMIT:
-예상 반환 행 수:
-실제 반환 행 수:
+업무 질문: 학생정보와 신청 정보 연결
+WHERE / JOIN / ORDER BY / LIMIT: JOIN, WHERE
+예상 반환 행 수: 
+실제 반환 행 수: 10
 ```
 
 | 관찰 항목 | 기록 |
 | --- | --- |
-| 주요 Scan/계획 노드 |  |
-| estimated rows |  |
-| actual rows |  |
-| Filter |  |
-| Index Cond |  |
-| Buffers hit/read |  |
-| Execution Time |  |
+| 주요 Scan/계획 노드 | Seq Scan|
+| estimated rows | 10 |
+| actual rows | 10 |
+| Filter | `student_id = 5000` (enrollments 테이블) |
+| Index Cond | `id = 5000` (students 테이블) |
+| Buffers hit/read | `shared hit = 739`, `read = 0` |
+| Execution Time | 20.474 ms |
 
 ### `cost`와 실제 실행 시간이 같은 개념이 아닌 이유
 
 ```text
-
+cost는 PostgreSQL가 사용하는 내부 비용 추정값일 뿐이지 실제 시간이 아니다
 ```
 
 ### `EXPLAIN ANALYZE`는 실제 SQL을 실행한다는 점을 왜 기억해야 하나요?
 
 ```text
-
+`EXPLAIN ANALYZE`는 실행 계획만 보여주는 것이 아니라 SQL을 실제로 실행하기 때문이다.
 ```
 
 ### 증거 화면
@@ -232,7 +237,7 @@ WHERE / JOIN / ORDER BY / LIMIT:
 assignments/chapter10/images/step04_before_plan.png
 ```
 
-`여기에 대표 기준 실행 계획을 삽입하세요.`
+![plan](./images/step04_before_plan.png)
 
 ---
 
@@ -250,20 +255,20 @@ idx_performance_enrollments_course_status
 
 | 후보 인덱스 | 대응 조회 패턴 | 예상 이점 | 컬럼 순서 이유 | 예상 비용/단점 |
 | --- | --- | --- | --- | --- |
-| `idx_performance_courses_title` |  |  |  |  |
-| `idx_performance_enrollments_student_id` |  |  |  |  |
-| `idx_performance_enrollments_course_status` |  |  |  |  |
+| `idx_performance_courses_title` | 제목 검색·정렬 | 검색·정렬이 빨라질 수 있음 | 제목을 기준으로 조회·정렬함 | 저장 공간, 데이터 변경 시 갱신 비용 |
+| `idx_performance_enrollments_student_id` | 학생별 신청 조회 | 해당 학생의 신청을 빨리 찾음 | `student_id`로 조회함 | 저장 공간, 데이터 변경 시 갱신 비용 |
+| `idx_performance_enrollments_course_status` | 강의별·상태별 신청 조회 | 조건에 맞는 신청을 빨리 찾음 | 강의만 조회하는 경우도 고려해 `course_id`를 앞에 둠 | 저장 공간, 데이터 변경 시 갱신 비용 |
 
 ### “중요한 컬럼이므로 인덱스를 만든다”는 설명이 부족한 이유
 
 ```text
-
+실제 조회에 도움이 되는지와 인덱스의 비용도 확인해야 하기 때문이다.
 ```
 
 ### `(course_id, status)`와 `(status, course_id)`가 항상 같은 효과가 아닌 이유
 
 ```text
-
+인덱스는 앞에 놓인 컬럼을 먼저 활용하므로 조회 조건의 순서에 따라 효과가 달라진다.
 ```
 
 ---
@@ -279,8 +284,8 @@ code/chapter10/04_create_candidate_indexes.sql
 생성 후 확인:
 
 ```text
-후보 인덱스 수:
-전체 인덱스 수:
+후보 인덱스 수: 3
+전체 인덱스 수: 9
 ```
 
 본문 기준:
@@ -294,7 +299,7 @@ code/chapter10/04_create_candidate_indexes.sql
 ### PRIMARY KEY나 UNIQUE가 이미 인덱스를 만들 수 있는데 같은 목적의 인덱스를 또 만들면 어떤 문제가 생기나요?
 
 ```text
-
+같은 인덱스가 중복되어 저장 공간을 낭비하고, 데이터를 추가하거나 수정할 때 불편하다.
 ```
 
 ---
@@ -349,7 +354,7 @@ Chapter 4에서 기록한 **동일 SQL**을 비교합니다.
 ### `Index Scan`으로 바뀌었다는 사실만으로 성공이라고 할 수 없는 이유
 
 ```text
-
+결과 행이나 읽는 범위가 줄었는지, 단계나 조건이 연결되었는지 등을 추가적으로 보아야 한다.
 ```
 
 ### 증거 화면
@@ -360,7 +365,7 @@ Chapter 4에서 기록한 **동일 SQL**을 비교합니다.
 assignments/chapter10/images/step07_after_plan.png
 ```
 
-`여기에 동일 SQL의 사후 실행 계획을 삽입하세요.`
+![plan](./images/step07_after_plan.png)
 
 ---
 
@@ -370,26 +375,26 @@ assignments/chapter10/images/step07_after_plan.png
 
 ```text
 예상 행 수 = 30001
-실제 행 수 =
-주요 계획 노드 =
+실제 행 수 = 30001
+주요 계획 노드 = Seq Scan
 ```
 
 ### 인덱스가 존재해도 PostgreSQL이 Seq Scan을 선택할 수 있는 이유
 
 ```text
-
+전체 행의 약 30%를 찾기 때문에 인덱스보다 테이블을 한 번에 읽는 편이 효율적일 수 있음
 ```
 
 ### “Seq Scan = 나쁜 계획”이라고 단정하면 안 되는 이유
 
 ```text
-
+조회하는 행이 많을 때는 테이블 전체를 읽는 것이 더 효율적일 수 있기 때문에
 ```
 
 ### PostgreSQL 16과 18 이상에서 복합 B-tree 후행 컬럼 조건의 계획이 다를 수 있는 이유
 
 ```text
-
+PostgreSQL 18 이상에는 추가 기능이 있기 때문에 다를 수 있음
 ```
 
 ---
@@ -399,21 +404,20 @@ assignments/chapter10/images/step07_after_plan.png
 `ORDER BY title`과 `ORDER BY title LIMIT 20` 계획을 비교합니다.
 
 ```text
-ORDER BY title 계획:
-
-ORDER BY title LIMIT 20 계획:
+ORDER BY title 계획: Seq Scan → Sort로 예상
+ORDER BY title LIMIT 20 계획: Limit → Sort → Seq Scan
 ```
 
 ### LIMIT이 있을 때 PostgreSQL이 전체 정렬보다 인덱스 순서를 활용하는 것이 유리할 수 있는 이유
 
 ```text
-
+정렬된 데이터 중 앞의 20개만 빠르게 가져올 수 있기 때문이다.
 ```
 
 ### 실제 계획에서 Sort 노드 또는 Index Scan을 어떻게 확인했나요?
 
 ```text
-
+실행 계획에 Sort와 Seq Scan이 있고, Index Scan은 없었다
 ```
 
 ---
@@ -430,26 +434,26 @@ code/chapter10/06_index_review.sql
 
 | 인덱스 | 크기/사용 관찰 | 유지 / 보류 / 제거 | 판단 근거 |
 | --- | --- | --- | --- |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| `idx_performance_courses_title` | 실행 결과의 크기와 `idx_scan` 확인 | 유지 | 제목 검색과 정렬에 사용할 수 있음 |
+| `idx_performance_enrollments_student_id` | 실행 결과의 크기와 `idx_scan` 확인 | 유지 | 학생별 신청 조회와 JOIN에 사용할 수 있음 |
+| `idx_performance_enrollments_course_status` | 실행 결과의 크기와 `idx_scan` 확인 | 유지 | 강의와 상태를 함께 조회할 때 사용할 수 있음 |
 
 ### `idx_scan = 0`이라는 이유 하나만으로 인덱스를 삭제하면 안 되는 이유
 
 ```text
-
+통계 초기화 시점이나 관찰 기간에 따라 아직 사용 횟수가 0일 수 있기 때문애
 ```
 
 ### 외래키 자식 컬럼 인덱스가 무결성 자체의 필수 조건은 아니지만 성능상 필요할 수 있는 이유
 
 ```text
-
+인덱스가 없어도 외래키 무결성은 확인되지만, JOIN이나 부모 행 삭제·수정이 느려질 수 있기 때문에
 ```
 
 ### 인덱스를 많이 만들었을 때 생기는 쓰기·저장 비용
 
 ```text
-
+저장 공간이 늘고, 데이터를 수정할 때마다 갱신해야 해서 비용이 많이 든다
 ```
 
 ---
@@ -463,7 +467,7 @@ code/chapter10/07_result_validation.sql
 ```
 
 ```text
-최종 검증 결과:
+최종 검증 결과: 통과
 ```
 
 검증할 핵심 내용:
@@ -478,7 +482,7 @@ course_project 기준 상태 유지
 ### 실행 계획 비교와 별도로 결과 행 동일성을 검증해야 하는 이유
 
 ```text
-
+조회 결과가 달라지면 올바른 비교가 아니기 때문이다.
 ```
 
 ---
@@ -498,21 +502,21 @@ E. 선택도가 낮으면 무조건 Index Scan이 나온다.
 ## 주장 1
 
 ```text
-선택한 주장:
+선택한 주장: 선택도가 낮으면 무조건 Index Scan이 나온다
 
-나의 반박:
+나의 반박: 조건에 맞는 행이 적어도 인덱스가 없거나 도움이 되지 않으면 Seq Scan이 나올 수 있다.
 
-실행 계획에서 확인한 근거:
+실행 계획에서 확인한 근거: 학생 5000번의 수강 중 신청은 3행뿐이었지만, Seq Scan으로 조회했다.
 ```
 
 ## 주장 2
 
 ```text
-선택한 주장:
+선택한 주장: 모든 FK에는 무조건 같은 방식의 인덱스를 만든다
 
-나의 반박:
+나의 반박: FK가 있다고 항상 같은 인덱스가 필요한 것은 아니다. 자주 쓰는 조회 조건에 따라 판단해야 한다.
 
-실행 계획에서 확인한 근거:
+실행 계획에서 확인한 근거: JOIN 계획에서 students는 Index Scan, enrollments는 Seq Scan을 사용했다. 테이블마다 조회 방식이 달랐다.
 ```
 
 ---
@@ -525,37 +529,37 @@ Chapter 07~09에서 발전시킨 개인 프로젝트를 사용합니다.
 
 | ID | 반복 조회 질문 | WHERE | JOIN | ORDER BY/LIMIT | 예상 반환 비율 | 후보 인덱스 |
 | --- | --- | --- | --- | --- | --- | --- |
-| P10-Q01 |  |  |  |  |  |  |
-| P10-Q02 |  |  |  |  |  |  |
+| P10-Q01 | 특정 학생이 아직 빌리고 있는 물품은 무엇인가? | `rentals.student_id`, 대여 상태 | `rentals`와 `items`를 물품 ID로 연결 | 대여일 최신순, 최근 10건 | 전체 대여 중 적은 비율 | `rentals(student_id, status, rented_at)` |
+| P10-Q02 | 지금 대여할 수 있는 특정 종류의 물품은 무엇인가? | `items.category`, `items.status` | 없음 | 물품명순 | 전체 물품 중 일부 | `items(category, status, name)` |
 
 ## 후보 1
 
 ```text
-후보 인덱스:
-컬럼 순서:
-이 조회에 도움이 될 것으로 예상한 이유:
-쓰기/저장 비용:
-현재 바로 적용 / 후보로 보류:
+후보 인덱스: rentals(student_id, status, rented_at)
+컬럼 순서: student_id → status → rented_at
+이 조회에 도움이 될 것으로 예상한 이유: 특정 학생의 대여 중인 물품을 찾고 최신순으로 보는 데 도움이 될 수 있다.
+쓰기/저장 비용: 대여 정보가 바뀔 때 인덱스 갱신이 필요하고 저장 공간을 사용한다.
+현재 바로 적용 / 후보로 보류: 후보(적용 예정)
 ```
 
 ## 후보 2
 
 ```text
-후보 인덱스:
-컬럼 순서:
-이 조회에 도움이 될 것으로 예상한 이유:
-쓰기/저장 비용:
-현재 바로 적용 / 후보로 보류:
+후보 인덱스: items(category, status, name)
+컬럼 순서: category → status → name
+이 조회에 도움이 될 것으로 예상한 이유: 종류와 대여 가능 상태로 물품을 찾고 이름순으로 보는 데 도움이 될 수 있다.
+쓰기/저장 비용: 물품 정보가 바뀔 때 인덱스 갱신이 필요하고 저장 공간을 사용한다.
+현재 바로 적용 / 후보로 보류: 보류
 ```
 
 ### 개인 프로젝트 데이터가 너무 적어 성능 검증이 어렵다면
 
 ```text
-필요한 데이터 규모:
-필요한 데이터 분포:
-비교할 SQL:
-비교할 지표:
-현재 판단 상태: 후보 / 보류
+필요한 데이터 규모: 대여 기록이 충분히 쌓인 상태
+필요한 데이터 분포: 대여 중인 기록과 반납된 기록이 함께 있고, 학생별 기록 수가 다양한 상태
+비교할 SQL: 특정 학생의 대여 중인 물품 조회
+비교할 지표: 실행 계획, actual rows, Buffers, Execution Time
+현재 판단 상태: 보류
 ```
 
 > 작은 데이터에서 Index Scan이 나오지 않는다고 억지로 설정을 바꾸어 특정 계획을 강제하지 않습니다.
@@ -611,45 +615,39 @@ EXPLAIN (ANALYZE, BUFFERS) 핵심 결과:
 아래 문장은 본인의 말로 작성합니다.
 
 ```text
-1. 인덱스가 필요한지 판단할 때 가장 먼저 확인할 것은
-   ____________________________________________________________ 이다.
+1. 인덱스가 필요한지 판단할 때 가장 먼저 확인할 것은 실제로 자주 사용하는 조회 조건이다.
 
-2. 같은 SQL의 인덱스 전후를 비교할 때 통제해야 할 조건은
-   ____________________________________________________________ 이다.
+2. 같은 SQL의 인덱스 전후를 비교할 때 통제해야 할 조건은 SQL과 데이터 상태를 같게 유지하는 것이다.
 
-3. Seq Scan이 항상 나쁜 것이 아닌 이유는
-   ____________________________________________________________ 이다.
+3. Seq Scan이 항상 나쁜 것이 아닌 이유는 많은 행을 찾을 때는 테이블 전체를 읽는 편이 효율적일 수 있기 때문이다.
 
-4. 실행 시간 한 번보다 계획과 Buffers를 함께 보는 이유는
-   ____________________________________________________________ 이다.
+4. 실행 시간 한 번보다 계획과 Buffers를 함께 보는 이유는 실행 시간은 달라질 수 있어 여러 근거를 같이 봐야 하기 때문이다.
 
-5. 내 개인 프로젝트에서 아직 인덱스를 보류한 후보가 있다면 그 이유는
-   ____________________________________________________________ 이다.
+5. 내 개인 프로젝트에서 아직 인덱스를 보류한 후보가 있다면 그 이유는 실제 조회 빈도와 데이터가 충분하지 않아 효과를 확인하기 어렵기 때문이다.
 ```
-
 ---
 
 # 16. 제출 체크리스트
 
-- [ ] `chapter10_answer.md`를 본인 저장소에 만들었다.
-- [ ] PostgreSQL 버전을 기록했다.
-- [ ] Chapter 07·08 기준 상태를 확인했다.
-- [ ] `performance_lab`의 10003 / 2 / 2003 / 100005 기준을 확인했다.
-- [ ] `03_baseline_explain.sql`을 후보 인덱스 생성 전에 실행했다.
-- [ ] 기준 실행 계획을 최소 3개 기록했다.
-- [ ] 후보 인덱스 3개의 근거를 먼저 작성했다.
-- [ ] 동일 SQL의 인덱스 전후 계획을 비교했다.
-- [ ] 실행 시간뿐 아니라 Scan, actual rows, Buffers, Index Cond를 확인했다.
-- [ ] `status` 단독 조건의 계획을 해석했다.
-- [ ] `ORDER BY`와 `LIMIT` 계획을 확인했다.
-- [ ] 인덱스 만능론 주장 2개를 반박했다.
-- [ ] `07_result_validation.sql`로 최종 상태를 확인했다.
-- [ ] 개인 프로젝트의 반복 조회 2개와 인덱스 후보를 작성했다.
-- [ ] AI 제안을 실제 실행 계획과 비교했다.
-- [ ] 핵심 캡처 3~4장만 넣었다.
-- [ ] 캡처에 비밀번호·개인정보가 없다.
-- [ ] GitHub 웹에서 Markdown과 이미지가 정상적으로 보인다.
-- [ ] 최종 답안을 commit/push했다.
+- [v] `chapter10_answer.md`를 본인 저장소에 만들었다.
+- [v] PostgreSQL 버전을 기록했다.
+- [v] Chapter 07·08 기준 상태를 확인했다.
+- [v] `performance_lab`의 10003 / 2 / 2003 / 100005 기준을 확인했다.
+- [v] `03_baseline_explain.sql`을 후보 인덱스 생성 전에 실행했다.
+- [v] 기준 실행 계획을 최소 3개 기록했다.
+- [v] 후보 인덱스 3개의 근거를 먼저 작성했다.
+- [v] 동일 SQL의 인덱스 전후 계획을 비교했다.
+- [v] 실행 시간뿐 아니라 Scan, actual rows, Buffers, Index Cond를 확인했다.
+- [v] `status` 단독 조건의 계획을 해석했다.
+- [v] `ORDER BY`와 `LIMIT` 계획을 확인했다.
+- [v] 인덱스 만능론 주장 2개를 반박했다.
+- [v] `07_result_validation.sql`로 최종 상태를 확인했다.
+- [v] 개인 프로젝트의 반복 조회 2개와 인덱스 후보를 작성했다.
+- [v] AI 제안을 실제 실행 계획과 비교했다.
+- [v] 핵심 캡처 3~4장만 넣었다.
+- [v] 캡처에 비밀번호·개인정보가 없다.
+- [v] GitHub 웹에서 Markdown과 이미지가 정상적으로 보인다.
+- [v] 최종 답안을 commit/push했다.
 
 ---
 
@@ -664,7 +662,7 @@ https://github.com/<본인-GitHub-ID>/<본인-저장소>/blob/main/assignments/c
 내 제출 URL:
 
 ```text
-
+https://github.com/seohee0233/ai-database-study/blob/main/assignments/chapter10/chapter10_answer.md
 ```
 
 > 저장소 메인 URL, 교수자 템플릿 URL, Raw URL이 아니라 **작성 완료된 본인 `chapter10_answer.md` 파일 화면 URL**을 제출합니다.
